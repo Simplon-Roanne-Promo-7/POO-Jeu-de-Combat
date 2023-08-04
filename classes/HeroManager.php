@@ -15,8 +15,9 @@ class HeroManager
 
     public function add(Hero $hero)
     {
-        $req = $this->db->prepare("INSERT INTO heroes(name) VALUES (:name)");
+        $req = $this->db->prepare("INSERT INTO heroes(name, type) VALUES (:name, :type)");
         $req->bindValue(':name', $hero->getName());
+        $req->bindValue(':type', $hero->getType());
         $req->execute();
         $hero->setId($this->db->lastInsertId());
     }
@@ -29,8 +30,22 @@ class HeroManager
         $heroesArray = $req->fetchAll(PDO::FETCH_ASSOC);        
         $heroes = [];
         foreach ($heroesArray as $hero) {
-            $heroes[] = new Hero($hero);
+            switch ($hero['type']) {
+                case 'Guerrier':
+                    $heroes[] = new Guerrier($hero);
+                    break;
+                case 'Archer':
+                    $heroes[] = new Archer($hero);
+                    break;
+                case 'Mage':
+                    $heroes[] = new Mage($hero);
+                    break;
+                default:
+                    $heroes[] = new Guerrier($hero);
+                    break;
+            }
         }
+        var_dump($heroes);
         return $heroes;
     }
 
@@ -41,7 +56,20 @@ class HeroManager
         $req->bindValue(':id', $id);
         $req->execute();
         $heroArray = $req->fetch(PDO::FETCH_ASSOC);        
-        return new Hero($heroArray);
+        switch ($heroArray['type']) {
+            case 'Guerrier':
+                return new Guerrier($heroArray);
+                break;
+            case 'Archer':
+                return new Archer($heroArray);
+                break;
+            case 'Mage':
+                return new Mage($heroArray);
+                break;
+            default:
+                return new Guerrier($heroArray);
+                break;
+        }
     }
 
     public function update(Hero $hero)
@@ -51,4 +79,5 @@ class HeroManager
         $req->bindValue(':id', $hero->getId());
         $req->execute();
     }
+
 }

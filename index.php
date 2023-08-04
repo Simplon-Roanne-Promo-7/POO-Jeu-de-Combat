@@ -4,18 +4,28 @@ require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/autoload.php';
 $heroManager = new HeroManager($db);
 
-if (isset($_POST['hero_name']) && !empty($_POST['hero_name'])) {
-    $hero = new Hero(['name' => $_POST['hero_name']]);
+if (isset($_POST['hero_name']) && !empty($_POST['hero_name']) 
+    && isset($_POST['hero_type']) && !empty($_POST['hero_type'])
+) {
+
+    switch ($_POST['hero_type']) {
+        case 'Guerrier':
+            $hero = new Guerrier(['name' => $_POST['hero_name'], 'type' => $_POST['hero_type']]);
+            break;
+        case 'Archer':
+            $hero = new Archer(['name' => $_POST['hero_name'], 'type' => $_POST['hero_type']]);
+            break;
+        case 'Mage':
+            $hero = new Mage(['name' => $_POST['hero_name'], 'type' => $_POST['hero_type']]);
+            break;
+        default:
+            $hero = new Guerrier(['name' => $_POST['hero_name'], 'type' => $_POST['hero_type']]);
+            break;
+    }
+
     $heroManager->add($hero);
 }
-
-
-
 $heroes = $heroManager->findAllAlive();
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,6 +52,15 @@ $heroes = $heroManager->findAllAlive();
                 <label for="exampleFormControlInput1" class="form-label">Ajouter un nouveau personnage</label>
                 <input type="text" class="form-control" placeholder="Nom du personnage" name="hero_name">
             </div>
+            <div class="mb-3">
+            <select class="form-select" aria-label="Default select example" name="hero_type">
+                <option selected>Selectionner un type</option>
+                <option value="Guerrier">Guerrier</option>
+                <option value="Archer">Archer</option>
+                <option value="Mage">Mage</option>
+            </select>
+
+            </div>
             <button type="submit" class="btn btn-primary">Ajouter</button>
         </form>
 
@@ -51,6 +70,7 @@ $heroes = $heroManager->findAllAlive();
                     <img src="https://www.pngmart.com/files/13/The-Legend-of-Zelda-Link-PNG-Image.png" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title"><?= $hero->getName() ?></h5>
+                        <p><?=$hero->getType()?></p>
                         <p class="card-text">
                             PV : <?= $hero->getHealthPoint() ?>
                             <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="<?= $hero->getHealthPoint() ?>" aria-valuemin="0" aria-valuemax="100">

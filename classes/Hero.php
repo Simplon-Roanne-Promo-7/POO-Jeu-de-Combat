@@ -1,12 +1,14 @@
 <?php
 
 
-class Hero 
+abstract class Hero
 {
 
-    private $id;
-    private $name;
-    private $health_point = 100;
+    private int $id;
+    private string $name;
+    private int $health_point = 100;
+    private string $type;
+    private int $energy = 0;
 
     public function __construct(array $data)
     {
@@ -23,6 +25,12 @@ class Hero
         if (isset($data['health_point'])) {
             $this->setHealthPoint($data['health_point']);
         }
+        if (isset($data['type'])) {
+            $this->setType($data['type']);
+        }
+        if (isset($data['energy'])) {
+            $this->setEnergy($data['energy']);
+        }
     } 
 
     public function hit(Monster $monster){
@@ -36,6 +44,8 @@ class Hero
         return $damage;
     }
 
+    abstract public function specialHit(Monster $monster);
+
     //GETTER
     public function getId(){
         return $this->id;
@@ -46,6 +56,14 @@ class Hero
     }
     public function getHealthPoint(){
         return $this->health_point;
+    }
+
+    public function getType(){
+        return $this->type;
+    }
+
+    public function getEnergy(){
+        return $this->energy;
     }
 
     //SETTER
@@ -60,4 +78,13 @@ class Hero
     public function setHealthPoint($health_point){
         $this->health_point = $health_point;
     }
+
+    public function setType($type){
+        $this->type = $type;
+    }
+
+    public function setEnergy($energy){
+        $this->energy = $energy;
+    }
+
 }

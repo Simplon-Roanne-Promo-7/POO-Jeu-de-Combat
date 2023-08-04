@@ -1,7 +1,7 @@
 <?php
 
 
-class Monster
+abstract class Monster
 {
 
     private $name;
